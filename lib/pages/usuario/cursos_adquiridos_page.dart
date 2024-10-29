@@ -12,27 +12,31 @@ class CursosAdquiridosPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text("Mis Favoritos")),
         foregroundColor: Color(0xFF0B6477),
       ),
-      body: ListView.builder(
-        itemCount: cursosAdquiridos.length,
-        itemBuilder: (context, index) {
-          final curso = cursosAdquiridos[index];
-          return CardCurso(
-            title: curso['title']!,
-            subtitle: curso['subtitle']!,
-            image: curso['image']!,
-            price: curso['price']!,
-            onTap: () {
-              // Aquí puedes agregar lógica para mostrar detalles del curso
+      body: Column(
+        children: [
+            Center(child: Text("Mis Favoritos")),
+            ListView.builder(
+            itemCount: cursosAdquiridos.length,
+            itemBuilder: (context, index) {
+              final curso = cursosAdquiridos[index];
+              return CardCurso(
+                title: curso['title']!,
+                subtitle: curso['subtitle']!,
+                image: curso['image']!,
+                price: curso['price']!,
+                onTap: () {
+                  // Aquí puedes agregar lógica para mostrar detalles del curso
+                },
+                onFavorite: () {
+                  // Aquí podrías implementar la lógica para eliminar de favoritos si lo deseas
+                },
+                isFavorite: true, // Siempre será verdadero ya que está en la lista de adquiridos
+              );
             },
-            onFavorite: () {
-              // Aquí podrías implementar la lógica para eliminar de favoritos si lo deseas
-            },
-            isFavorite: true, // Siempre será verdadero ya que está en la lista de adquiridos
-          );
-        },
+          ),
+        ]
       ),
     );
   }
