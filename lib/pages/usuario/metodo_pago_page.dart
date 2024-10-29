@@ -149,7 +149,7 @@ class _MetodoPagoPageState extends State<MetodoPagoPage> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Color(0xFF14919B),
                 ),
               ),
             ),
@@ -173,7 +173,7 @@ class _MetodoPagoPageState extends State<MetodoPagoPage> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Color(0xFF14919B),
                 ),
               ),
             ),
@@ -195,21 +195,23 @@ class _MetodoPagoPageState extends State<MetodoPagoPage> {
     );
   }
 
-  Widget _metodoPagoCard(String metodoPago,
-      {VoidCallback? onEdit, VoidCallback? onDelete}) {
+  Widget _metodoPagoCard(String metodoPago, { VoidCallback? onEdit, VoidCallback? onDelete }) {
+
+    print('MÉTODO DE PAGO');
+    print(metodoPago);
     return Container(
       height: 80,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.blue, width: 2),
+        border: Border.all(color: Color(0xFF14919B), width: 2),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(16),
       child: Row(
-        children: [
+        children: [ 
           Image(
             image: AssetImage(
-                'assets/images/${metodoPago.split(":")[0].toLowerCase()}.png'),
+                'assets/${metodoPago.contains(':') ? metodoPago.split(":")[0].toLowerCase() : metodoPago}.png'),
             width: 50,
           ),
           const SizedBox(width: 16),

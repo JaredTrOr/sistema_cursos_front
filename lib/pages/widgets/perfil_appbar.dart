@@ -12,10 +12,8 @@ class AppBarPerfil extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween, 
         children: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
+          GestureDetector(
+            onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -23,12 +21,16 @@ class AppBarPerfil extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   );
                 },
-                icon: const Icon(Icons.account_circle),
-                iconSize: 40,
-              ),
-              const SizedBox(width: 8), 
-              const Text("Usuario"),
-            ],
+            child: Row(
+              children: [
+                Icon(
+                  size: 30,
+                  Icons.account_circle,
+                ),
+                const SizedBox(width: 8), 
+                const Text("Usuario"),
+              ],
+            ),
           ),
           // Flecha a la derecha
           arrow

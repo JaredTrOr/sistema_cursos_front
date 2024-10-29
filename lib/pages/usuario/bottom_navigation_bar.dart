@@ -27,6 +27,7 @@ class _BarraNavegacionState extends State<BarraNavegacion> {
       appBar: AppBarPerfil(arrow: false),
       body: _paginas[_paginaActual],
       bottomNavigationBar: BottomNavigationBar(
+        selectedIconTheme: IconThemeData(color: Color(0xFF14919B)),
         type: BottomNavigationBarType.fixed,
         onTap: (index) {
           if (index == 2) {

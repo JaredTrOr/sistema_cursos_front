@@ -183,7 +183,7 @@ class _LoginForm extends StatelessWidget {
               padding: EdgeInsets.all(20),
               color: Color(0xFF213A57),
               onPressed: () {
-                Navigator.pushNamed(context, 'navigation');
+                Navigator.pushReplacementNamed(context, 'login');
               },
               
               // onPressed: loginForm.isLoading

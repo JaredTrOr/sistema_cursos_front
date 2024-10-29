@@ -44,7 +44,7 @@ class CardCurso extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 TextButton(
-                  child: const Text('Agregar'),
+                  child: const Text('Agregar', style: TextStyle(color: Color(0xFF14919B)),),
                   onPressed: () {}, 
                 ),
                 const SizedBox(width: 60),

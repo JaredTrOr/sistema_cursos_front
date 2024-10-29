@@ -144,10 +144,41 @@ class _LoginForm extends StatelessWidget {
               //   }
               // ,
               child: Text(
-                'Iniciar sesión',
+                'Iniciar sesión como estudiante',
                 style: const TextStyle(color: Colors.white),
               ),
-            )
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            MaterialButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              disabledColor: Colors.grey,
+              elevation: 0,
+              padding: EdgeInsets.all(20),
+              color: Color(0xFF213A57),
+              onPressed: () {
+                Navigator.pushNamed(context, 'navigation');
+              },
+              // onPressed: loginForm.isLoading 
+              //   ? null 
+              //   : () async {
+              //     FocusScope.of(context).unfocus();
+              //     if (!loginForm.isValidForm()) return;
+        
+              //     loginForm.isLoading = true;
+        
+              //     await Future.delayed(const Duration(seconds: 2));
+        
+              //     loginForm.isLoading = false;
+              //     Navigator.pushReplacementNamed(context, 'home');
+              //   }
+              // ,
+              child: Text(
+                'Iniciar sesión como creador',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
           ],
         ),
       ),
