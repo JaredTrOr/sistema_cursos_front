@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_cursos_front/pages/usuario/curso_page.dart';
 import 'package:sistema_cursos_front/pages/usuario/cursos_adquiridos_page.dart';
-import 'package:sistema_cursos_front/pages/widgets/card_curso.dart';
+import 'package:sistema_cursos_front/widgets/card_curso.dart';
 
 class SearchProductos extends SearchDelegate {
   final List<Map<String, String>> cursos;

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AgregarCursoPage extends StatefulWidget {
+  const AgregarCursoPage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _AgregarCursoPageState createState() => _AgregarCursoPageState();
 }
 
@@ -56,7 +59,7 @@ class _AgregarCursoPageState extends State<AgregarCursoPage> {
             children: [
               SizedBox(height: 20),
               Center(
-                child: Text('Agregar nuevo curso', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, backgroundColor: Color(0xFF14919B))),
+                child: Text('Agregar nuevo curso', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF14919B))),
               ),
               SizedBox(height: 40),
               TextFormField(
@@ -89,11 +92,10 @@ class _AgregarCursoPageState extends State<AgregarCursoPage> {
                   // Aquí va la lógica para subir una imagen
                 },
                 icon: Icon(Icons.image),
-                label: Text("Subir Imagen"),
+                label: Text("Subir Imagen", style: TextStyle(color: Colors.white),),
                 style: ElevatedButton.styleFrom(
-
-                  backgroundColor: Color(0xFF14919B,
-                  ),
+                  iconColor: Colors.white,
+                  backgroundColor: Color(0xFF213A57),
                 ),
               ),
               SizedBox(height: 20),
@@ -103,7 +105,7 @@ class _AgregarCursoPageState extends State<AgregarCursoPage> {
               ),
               SizedBox(height: 10),
               ...lessons.map((lesson) {
-                int index = lessons.indexOf(lesson);
+                // int index = lessons.indexOf(lesson);
                 return Column(
                   children: [
                     TextFormField(
@@ -124,9 +126,10 @@ class _AgregarCursoPageState extends State<AgregarCursoPage> {
                 child: ElevatedButton.icon(
                   onPressed: _addLesson,
                   icon: Icon(Icons.add),
-                  label: Text("Agregar Lección"),
+                  label: Text("Agregar Lección", style: TextStyle(color: Colors.white),),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF14919B),
+                    backgroundColor: Color(0xFF213A57),
+                    iconColor: Colors.white,
                   ),
                 ),
               ),
@@ -137,9 +140,9 @@ class _AgregarCursoPageState extends State<AgregarCursoPage> {
                     // Procesar los datos del formulario
                   }
                 },
-                child: Text("Guardar"),
+                child: Text("Guardar", style: TextStyle(color: Colors.white),),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF14919B),
+                  backgroundColor: Color(0xFF213A57),
                   padding: EdgeInsets.symmetric(vertical: 16),
                 ),
               ),

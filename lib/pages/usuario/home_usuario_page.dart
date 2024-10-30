@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sistema_cursos_front/pages/widgets/search_productos.dart';
+import 'package:sistema_cursos_front/widgets/search_productos.dart';
 import 'package:sistema_cursos_front/pages/usuario/curso_page.dart';
-import 'package:sistema_cursos_front/pages/widgets/card_curso.dart';
+import 'package:sistema_cursos_front/widgets/card_curso.dart';
 import 'cursos_adquiridos_page.dart'; // Asegúrate de importar la página de cursos adquiridos
 
 class HomeUsuarioPage extends StatefulWidget {

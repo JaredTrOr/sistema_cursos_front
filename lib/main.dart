@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_cursos_front/pages/creador_contenido/agregar_curso_page.dart';
+import 'package:sistema_cursos_front/pages/creador_contenido/cursos_creador_contenido_page.dart';
 import 'package:sistema_cursos_front/pages/creador_contenido/desplegar_curso_page.dart';
 import 'package:sistema_cursos_front/pages/creador_contenido/editar_curso_page.dart';
-import 'package:sistema_cursos_front/pages/creador_contenido/home_creador_page.dart';
 import 'package:sistema_cursos_front/pages/login_page.dart';
 import 'package:sistema_cursos_front/pages/registro_page.dart';
 import 'package:sistema_cursos_front/pages/usuario/bottom_navigation_bar.dart';
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Plataforma de cursos',
-      initialRoute: 'agregar_curso',
+      initialRoute: 'login',
       theme: ThemeData.light(),
       routes: {
         'login': (context) => const LoginPage(),
@@ -41,8 +41,8 @@ class MyApp extends StatelessWidget {
         'perfil_usuario': (context) => const PerfilUsuarioPage(),
 
         // CREADOR DE CONTENIDO
-        'home_creador': (context) => const HomeCreadorPage(),
-        'agregar_curso': (context) => AgregarCursoPage(),
+        'home_creador': (context) => CursosCreadorContenidoPage(),
+        'agregar_curso': (context) => const AgregarCursoPage(),
         'editar_curso': (context) => const EditarCursoPage(),
         'desplegar_curso': (context) => const DesplegarCursoPage()
       },

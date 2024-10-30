@@ -3,7 +3,7 @@ import 'package:sistema_cursos_front/pages/usuario/carrito_compras_page.dart';
 import 'package:sistema_cursos_front/pages/usuario/cursos_adquiridos_page.dart';
 import 'package:sistema_cursos_front/pages/usuario/cursos_favoritos_page.dart';
 import 'package:sistema_cursos_front/pages/usuario/home_usuario_page.dart';
-import 'package:sistema_cursos_front/pages/widgets/perfil_appbar.dart';
+import 'package:sistema_cursos_front/widgets/perfil_appbar.dart';
 
 class BarraNavegacion extends StatefulWidget {
   const BarraNavegacion({super.key});

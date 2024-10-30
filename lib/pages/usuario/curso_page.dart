@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sistema_cursos_front/pages/widgets/perfil_appbar.dart';
+import 'package:sistema_cursos_front/widgets/perfil_appbar.dart';
 
 class CursoPage extends StatelessWidget {
   final String title;
@@ -54,7 +54,7 @@ class CursoPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0), // Ajusta el valor según necesites
           child: Row(
             children: [
-        Expanded( // Esto asegura que el contenido ocupe el espacio disponible
+        const Expanded( // Esto asegura que el contenido ocupe el espacio disponible
           child: Column(
             children: [
               Row(

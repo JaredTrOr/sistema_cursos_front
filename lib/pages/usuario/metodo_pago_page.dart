@@ -29,14 +29,14 @@ class _MetodoPagoPageState extends State<MetodoPagoPage> {
         ? nuevosMetodosPago[index!].split(", ")[0].split(": ")[1]
         : '';
     String cvvCode = '';
-    bool isCvvFocused = false;
+    // bool isCvvFocused = false;
 
-    final TextEditingController cardHolderNameController =
-        TextEditingController(text: cardHolderName);
-    final TextEditingController cardNumberController =
-        TextEditingController(text: cardNumber);
-    final TextEditingController expiryDateController =
-        TextEditingController(text: expiryDate);
+    // final TextEditingController cardHolderNameController =
+    //     TextEditingController(text: cardHolderName);
+    // final TextEditingController cardNumberController =
+    //     TextEditingController(text: cardNumber);
+    // final TextEditingController expiryDateController =
+    //     TextEditingController(text: expiryDate);
 
     AwesomeDialog(
       context: context,
@@ -89,17 +89,17 @@ class _MetodoPagoPageState extends State<MetodoPagoPage> {
         ],
       ),
       btnOkOnPress: () {
-        if (formKey.currentState!.validate()) {
-          setState(() {
-            String newMetodo =
-                '$tipoTarjeta: $cardHolderName, $cardNumber, Exp: $expiryDate';
-            if (isEditMode) {
-              nuevosMetodosPago[index!] = newMetodo;
-            } else {
-              nuevosMetodosPago.add(newMetodo);
-            }
-          });
-        }
+        // if (formKey.currentState!.validate()) {
+        //   setState(() {
+        //     String newMetodo =
+        //         '$tipoTarjeta: $cardHolderName, $cardNumber, Exp: $expiryDate';
+        //     if (isEditMode) {
+        //       nuevosMetodosPago[index!] = newMetodo;
+        //     } else {
+        //       nuevosMetodosPago.add(newMetodo);
+        //     }
+        //   });
+        // }
       },
       btnCancelOnPress: () {},
     ).show();
