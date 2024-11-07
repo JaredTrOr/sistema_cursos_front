@@ -37,6 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.6
   awesome_dialog: ^3.2.1
   flutter_credit_card: ^3.0.0
+  firebase_core: ^3.6.0
+  cloud_firestore: ^5.4.4
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
