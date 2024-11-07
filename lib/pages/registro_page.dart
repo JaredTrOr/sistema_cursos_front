@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter/painting.dart';
-// import 'package:flutter/rendering.dart';
-// import 'package:flutter/widgets.dart';
+import 'package:sistema_cursos_front/widgets/input_decoration.dart';
 
 class RegistroPage extends StatelessWidget {
   const RegistroPage({super.key});
@@ -13,19 +11,11 @@ class RegistroPage extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 70),
-            Column(
-              children: [
-                const SizedBox(height: 10),
-                const Image(image: AssetImage('assets/logo.png')),
-                _LoginForm(),
-              ],
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            const Text(
-              '¿Ya tienes una cuenta?',
-            ),
+            const SizedBox(height: 10),
+            const Image(image: AssetImage('assets/logo.png')),
+            _SignUpForm(),
+            const SizedBox(height: 50),
+            const Text('¿Ya tienes una cuenta?'),
             GestureDetector(
               onTap: () {
                 Navigator.pushReplacementNamed(context, 'login');
@@ -35,9 +25,7 @@ class RegistroPage extends StatelessWidget {
                 style: TextStyle(color: Color(0xFF14919B)),
               ),
             ),
-            const SizedBox(
-              height: 50,
-            )
+            const SizedBox(height: 50)
           ],
         ),
       ),
@@ -45,7 +33,7 @@ class RegistroPage extends StatelessWidget {
   }
 }
 
-class _LoginForm extends StatelessWidget {
+class _SignUpForm extends StatelessWidget {
   // const _LoginForm({super.key});
 
   @override
@@ -62,26 +50,15 @@ class _LoginForm extends StatelessWidget {
             TextFormField(
               autocorrect: false,
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                        color: Color(0xFF14919B),
-                        width: 1.0), // Normal border color
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                        color: Color(0xFF14919B),
-                        width: 2.0), // Border color when focused
-                  ),
-                  hintText: 'Ejemplo: juan.perez@gmail.com',
-                  labelText: 'Correo electrónico',
-                  labelStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: Icon(
-                    Icons.alternate_email_sharp,
-                    color: Color(0xFF14919B),
-                  )),
+              decoration: inputDecoration('Nombre', 'Escriba su nombre', Icons.person),
+              // onChanged: (value) {  loginForm.email = value },
+              validator: (value) { return; },
+            ),
+            const SizedBox(height: 30),
+            TextFormField(
+              autocorrect: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration: inputDecoration('Correo electrónico', 'Ejemplo juan.perez@gmail.com', Icons.alternate_email),
               // onChanged: (value) {  loginForm.email = value },
               validator: (value) {
                 String pattern =
@@ -92,34 +69,12 @@ class _LoginForm extends StatelessWidget {
                     : 'El correo no es válido';
               },
             ),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             TextFormField(
               autocorrect: false,
               obscureText: true,
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                      color: Color(0xFF14919B),
-                      width: 1.0), // Normal border color
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                      color: Color(0xFF14919B),
-                      width: 2.0), // Border color when focused
-                ),
-                hintText: '********',
-                labelText: 'Contraseña',
-                labelStyle: TextStyle(color: Colors.grey),
-                prefixIcon: Icon(
-                  Icons.lock_outline,
-                  color: Color(0xFF14919B),
-                ),
-              ),
+              decoration: inputDecoration('Contraseña', '******', Icons.lock_outline),
               // onChanged: (value) => loginForm.password = value,
               validator: (value) {
                 if (value != null && value.length >= 6) {
@@ -129,11 +84,9 @@ class _LoginForm extends StatelessWidget {
                 return 'La contraseña debe tener al menos 6 caracteres';
               },
             ),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             DropdownButtonFormField<String>(
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: "Estudiante",
                   child: Text("Estudiante"),
@@ -146,42 +99,18 @@ class _LoginForm extends StatelessWidget {
               onChanged: (value) {
                 // Aquí puedes manejar el valor seleccionado
               },
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                      color: Color(0xFF14919B),
-                      width: 1.0), // Color del borde normal
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                      color: Color(0xFF14919B),
-                      width: 2.0), // Color del borde al enfocar
-                ),
-                hintText: 'Selecciona una opción',
-                labelText: 'Rol',
-                labelStyle: TextStyle(color: Colors.grey),
-                prefixIcon: Icon(
-                  Icons.person,
-                  color: Color(0xFF14919B),
-                ),
-              ),
-              style: TextStyle(
-                  color: Colors.black), // Color del texto de las opciones
-              iconEnabledColor:
-                  Color(0xFF14919B), // Color del icono de la flecha
+              decoration: inputDecoration('Rol', 'Selecciona una opción', Icons.person),
+              style: const TextStyle(color: Colors.black), // Color del texto de las opciones
+              iconEnabledColor:const Color(0xFF14919B), // Color del icono de la flecha
             ),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             MaterialButton(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+              borderRadius: BorderRadius.circular(10)),
               disabledColor: Colors.grey,
               elevation: 0,
-              padding: EdgeInsets.all(20),
-              color: Color(0xFF213A57),
+              padding: const EdgeInsets.all(20),
+              color: const Color(0xFF213A57),
               onPressed: () {
                 Navigator.pushReplacementNamed(context, 'login');
               },
@@ -200,10 +129,7 @@ class _LoginForm extends StatelessWidget {
               //     Navigator.pushReplacementNamed(context, 'home');
               //   }
               // ,
-              child: Text(
-                'Registrarse',
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: const Text( 'Registrarse',style: TextStyle(color: Colors.white),),
             )
           ],
         ),

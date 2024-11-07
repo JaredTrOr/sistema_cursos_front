@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sistema_cursos_front/widgets/input_decoration.dart';
 
 class AgregarCursoPage extends StatefulWidget {
   const AgregarCursoPage({super.key});
@@ -21,23 +22,6 @@ class _AgregarCursoPageState extends State<AgregarCursoPage> {
     });
   }
 
-  InputDecoration _inputDecoration(String label, String hint, IconData icon) {
-    return InputDecoration(
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: Color(0xFF14919B), width: 1.0),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: Color(0xFF14919B), width: 2.0),
-      ),
-      hintText: hint,
-      labelText: label,
-      labelStyle: TextStyle(color: Colors.grey),
-      prefixIcon: Icon(icon, color: Color(0xFF14919B)),
-    );
-  }
-
   @override
   void dispose() {
     // Liberar controladores de los campos dinámicos
@@ -57,36 +41,36 @@ class _AgregarCursoPageState extends State<AgregarCursoPage> {
           key: _formKey,
           child: ListView(
             children: [
-              SizedBox(height: 20),
-              Center(
+              const SizedBox(height: 20),
+              const Center(
                 child: Text('Agregar nuevo curso', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF14919B))),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               TextFormField(
-                decoration: _inputDecoration("Nombre", "Ejemplo: Curso de Flutter", Icons.person),
+                decoration: inputDecoration("Nombre", "Ejemplo: Curso de Flutter", Icons.person),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
-                decoration: _inputDecoration("Descripción", "Describe el curso brevemente", Icons.description),
+                decoration: inputDecoration("Descripción", "Describe el curso brevemente", Icons.description),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
-                decoration: _inputDecoration("Precio", "Ejemplo: 100", Icons.attach_money),
+                decoration: inputDecoration("Precio", "Ejemplo: 100", Icons.attach_money),
                 keyboardType: TextInputType.number,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
-                decoration: _inputDecoration("Duración", "Ejemplo: 10 horas", Icons.access_time),
+                decoration: inputDecoration("Duración", "Ejemplo: 10 horas", Icons.access_time),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
-                decoration: _inputDecoration("Autor", "Nombre del autor", Icons.person),
+                decoration: inputDecoration("Autor", "Nombre del autor", Icons.person),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
-                decoration: _inputDecoration("Idioma", "Ejemplo: Español", Icons.language),
+                decoration: inputDecoration("Idioma", "Ejemplo: Español", Icons.language),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton.icon(
                 onPressed: () {
                   // Aquí va la lógica para subir una imagen
@@ -98,24 +82,24 @@ class _AgregarCursoPageState extends State<AgregarCursoPage> {
                   backgroundColor: Color(0xFF213A57),
                 ),
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 "Número de Lecciones",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ...lessons.map((lesson) {
                 // int index = lessons.indexOf(lesson);
                 return Column(
                   children: [
                     TextFormField(
                       controller: lesson['title'],
-                      decoration: _inputDecoration("Título de la Lección", "Ejemplo: Introducción", Icons.title),
+                      decoration: inputDecoration("Título de la Lección", "Ejemplo: Introducción", Icons.title),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextFormField(
                       controller: lesson['url'],
-                      decoration: _inputDecoration("URL de la Lección", "Ejemplo: https://example.com", Icons.link),
+                      decoration: inputDecoration("URL de la Lección", "Ejemplo: https://example.com", Icons.link),
                     ),
                     SizedBox(height: 20),
                   ],
