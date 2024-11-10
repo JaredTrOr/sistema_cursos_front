@@ -12,6 +12,10 @@ class CoursesService extends ChangeNotifier {
 
   final _db = FirebaseFirestore.instance;
 
+  CoursesService() {
+    getCourses();
+  }
+
   Future<Map<String, dynamic>> getCourses() async {
     try {
       isLoading = true;
