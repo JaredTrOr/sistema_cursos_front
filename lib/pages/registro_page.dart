@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sistema_cursos_front/models/user_model.dart';
+import 'package:sistema_cursos_front/services/user_service.dart';
 import 'package:sistema_cursos_front/widgets/input_decoration.dart';
 
 class RegistroPage extends StatelessWidget {
@@ -14,7 +17,7 @@ class RegistroPage extends StatelessWidget {
             const SizedBox(height: 10),
             const Image(image: AssetImage('assets/logo.png')),
             _SignUpForm(),
-            const SizedBox(height: 50),
+            const SizedBox(height: 20),
             const Text('¿Ya tienes una cuenta?'),
             GestureDetector(
               onTap: () {
@@ -34,14 +37,17 @@ class RegistroPage extends StatelessWidget {
 }
 
 class _SignUpForm extends StatelessWidget {
-  // const _LoginForm({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final loginForm = Provider.of<LoginFormProvider>(context);
+
+    final formKey = GlobalKey<FormState>();
+    final userService = Provider.of<UserService>(context);
+
+    User newUser = userService.getEmptyUser;
 
     return Form(
-      // key: loginForm.formKey,
+      key: formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -51,15 +57,20 @@ class _SignUpForm extends StatelessWidget {
               autocorrect: false,
               keyboardType: TextInputType.emailAddress,
               decoration: inputDecoration('Nombre', 'Escriba su nombre', Icons.person),
-              // onChanged: (value) {  loginForm.email = value },
-              validator: (value) { return; },
+              onChanged: (value) => newUser.name = value,
+              validator: (value) { 
+                if (value != null && value.length >= 3) {
+                  return null;
+                }
+                return 'El nombre debe tener al menos 3 caracteres';
+              },
             ),
             const SizedBox(height: 30),
             TextFormField(
               autocorrect: false,
               keyboardType: TextInputType.emailAddress,
               decoration: inputDecoration('Correo electrónico', 'Ejemplo juan.perez@gmail.com', Icons.alternate_email),
-              // onChanged: (value) {  loginForm.email = value },
+              onChanged: (value) => newUser.email = value,
               validator: (value) {
                 String pattern =
                     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -75,7 +86,7 @@ class _SignUpForm extends StatelessWidget {
               obscureText: true,
               keyboardType: TextInputType.emailAddress,
               decoration: inputDecoration('Contraseña', '******', Icons.lock_outline),
-              // onChanged: (value) => loginForm.password = value,
+              onChanged: (value) => newUser.password = value,
               validator: (value) {
                 if (value != null && value.length >= 6) {
                   return null;
@@ -96,9 +107,7 @@ class _SignUpForm extends StatelessWidget {
                   child: Text("Creador de contenido"),
                 ),
               ],
-              onChanged: (value) {
-                // Aquí puedes manejar el valor seleccionado
-              },
+              onChanged: (value) => newUser.rol = value == 'Estudiante' ? 0 : 1, 
               decoration: inputDecoration('Rol', 'Selecciona una opción', Icons.person),
               style: const TextStyle(color: Colors.black), // Color del texto de las opciones
               iconEnabledColor:const Color(0xFF14919B), // Color del icono de la flecha
@@ -112,23 +121,31 @@ class _SignUpForm extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               color: const Color(0xFF213A57),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, 'login');
+                if (formKey.currentState?.validate() ?? false) {
+
+                  userService.signup(newUser).then((response) {
+
+                    print(response);
+
+                    if (response['success']) {
+
+                      // popUp(context: context, title: 'Éxito', body: Text(response['message']));
+                      Navigator.pushReplacementNamed(context, 'login');
+
+                    } else {
+                      print('ERROR');
+                      print(response['message']);
+                      // popUp(context: context, title: 'Error', body: Text(response['message']));
+                    }
+                  }).catchError((error) {
+                    print('ERROR');
+                    print(error);
+                    // popUp(context: context, title: 'Error', body: Text('Error al registrar usuario'));
+                  });
+                 
+                }
+                
               },
-              
-              // onPressed: loginForm.isLoading
-              //   ? null
-              //   : () async {
-              //     FocusScope.of(context).unfocus();
-              //     if (!loginForm.isValidForm()) return;
-
-              //     loginForm.isLoading = true;
-
-              //     await Future.delayed(const Duration(seconds: 2));
-
-              //     loginForm.isLoading = false;
-              //     Navigator.pushReplacementNamed(context, 'home');
-              //   }
-              // ,
               child: const Text( 'Registrarse',style: TextStyle(color: Colors.white),),
             )
           ],
