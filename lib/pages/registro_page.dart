@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:sistema_cursos_front/models/user_model.dart';
 import 'package:sistema_cursos_front/services/user_service.dart';
 import 'package:sistema_cursos_front/widgets/input_decoration.dart';
+import 'package:sistema_cursos_front/widgets/is_loading.dart';
+import 'package:sistema_cursos_front/widgets/pop_up.dart';
 
 class RegistroPage extends StatelessWidget {
   const RegistroPage({super.key});
@@ -45,6 +47,8 @@ class _SignUpForm extends StatelessWidget {
     final userService = Provider.of<UserService>(context);
 
     User newUser = userService.getEmptyUser;
+
+    if (userService.isLoading) return const IsLoading();
 
     return Form(
       key: formKey,
@@ -133,14 +137,10 @@ class _SignUpForm extends StatelessWidget {
                       Navigator.pushReplacementNamed(context, 'login');
 
                     } else {
-                      print('ERROR');
-                      print(response['message']);
-                      // popUp(context: context, title: 'Error', body: Text(response['message']));
+                      popUp(context: context, title: 'Error', body: response['message'], dialogType: 'warning');
                     }
                   }).catchError((error) {
-                    print('ERROR');
-                    print(error);
-                    // popUp(context: context, title: 'Error', body: Text('Error al registrar usuario'));
+                    popUp(context: context, title: 'Error', body: 'Error al registrar usuario', dialogType: 'error');
                   });
                  
                 }

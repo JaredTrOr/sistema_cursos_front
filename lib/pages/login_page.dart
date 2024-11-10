@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sistema_cursos_front/services/user_service.dart';
 import 'package:sistema_cursos_front/widgets/input_decoration.dart';
+import 'package:sistema_cursos_front/widgets/is_loading.dart';
+import 'package:sistema_cursos_front/widgets/pop_up.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -42,6 +44,10 @@ class _LoginForm extends StatelessWidget {
       'email': '',
       'password': ''
     };
+
+    if (userService.isLoading) {
+      return const IsLoading();
+    }
 
     return Form(
       key: formKey,
@@ -87,23 +93,19 @@ class _LoginForm extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               color: const Color(0xFF213A57),
               onPressed: () {
-                FocusScope.of(context).unfocus();
                 if (formKey.currentState?.validate() ?? false) {  
 
                   userService.login(loginForm['email']!, loginForm['password']!).then((response) {
+
                     if (response['success']) {
                       userService.userProvider = response['data'];
-
                       Navigator.pushNamed(context, userService.userProvider.rol == 0 ? 'navigation' : 'home_creador');
-
                     }
                     else {
-                      print('ERROR');
-                      print(response['message']);
+                      popUp(context: context, title: 'Error', body: response['message'], dialogType: 'warning');
                     }
                   }).catchError((error) {
-                      print('ERROR');
-                      print(error);
+                      popUp(context: context, title: 'Error', body: 'Hubo un error en la petición al servidor', dialogType: 'error');
                   });
 
                 }
