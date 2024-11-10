@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sistema_cursos_front/services/user_service.dart';
 import 'package:sistema_cursos_front/widgets/input_decoration.dart';
 
 class LoginPage extends StatelessWidget {
@@ -29,14 +31,20 @@ class LoginPage extends StatelessWidget {
 }
 
 class _LoginForm extends StatelessWidget {
-  // const _LoginForm({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final loginForm = Provider.of<LoginFormProvider>(context);
+
+    final formKey = GlobalKey<FormState>();
+    final userService = Provider.of<UserService>(context);
+
+    Map<String, String> loginForm = {
+      'email': '',
+      'password': ''
+    };
 
     return Form(
-      // key: loginForm.formKey,
+      key: formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -46,7 +54,7 @@ class _LoginForm extends StatelessWidget {
               autocorrect: false,
               keyboardType: TextInputType.emailAddress,
               decoration: inputDecoration('Correo electrónico', 'Ejemplo: juan.perez@gmail.com', Icons.alternate_email),
-              // onChanged: (value) {  loginForm.email = value },
+              onChanged: (value) => loginForm['email'] = value ,
               validator: (value)  {
                 String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
                 RegExp regExp = RegExp(pattern);
@@ -61,12 +69,11 @@ class _LoginForm extends StatelessWidget {
               obscureText: true,
               keyboardType: TextInputType.emailAddress,
               decoration: inputDecoration('Contraseña', '*****', Icons.lock_outline),
-              // onChanged: (value) => loginForm.password = value,
+              onChanged: (value) => loginForm['password'] = value,
               validator: (value) {
                 if (value != null && value.length >= 6) {
                   return null;
                 }
-        
                 return 'La contraseña debe tener al menos 6 caracteres';
               },
             ),
@@ -80,22 +87,28 @@ class _LoginForm extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               color: const Color(0xFF213A57),
               onPressed: () {
-                Navigator.pushNamed(context, 'navigation');
-              },
-              // onPressed: loginForm.isLoading 
-              //   ? null 
-              //   : () async {
-              //     FocusScope.of(context).unfocus();
-              //     if (!loginForm.isValidForm()) return;
-        
-              //     loginForm.isLoading = true;
-        
-              //     await Future.delayed(const Duration(seconds: 2));
-        
-              //     loginForm.isLoading = false;
-              //     Navigator.pushReplacementNamed(context, 'home');
-              //   }
-              // ,
+                FocusScope.of(context).unfocus();
+                if (formKey.currentState?.validate() ?? false) {  
+
+                  userService.login(loginForm['email']!, loginForm['password']!).then((response) {
+                    if (response['success']) {
+                      userService.userProvider = response['data'];
+
+                      Navigator.pushNamed(context, userService.userProvider.rol == 0 ? 'navigation' : 'home_creador');
+
+                    }
+                    else {
+                      print('ERROR');
+                      print(response['message']);
+                    }
+                  }).catchError((error) {
+                      print('ERROR');
+                      print(error);
+                  });
+
+                }
+              }
+              ,
               child: const Text(
                 'Iniciar sesión',
                 style: TextStyle(color: Colors.white),
