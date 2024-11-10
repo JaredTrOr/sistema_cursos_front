@@ -5,11 +5,12 @@ class Course{
   String name;
   String description;
   double price;
-  Duration timeDuration;
+  String timeDuration;
   String? image;
   String author;
   String language;
   int numberOfLessons;
+  bool isFavorite = false;
 
   Course({
     this.id,
@@ -20,7 +21,8 @@ class Course{
     this.image,
     required this.author,
     required this.language,
-    required this.numberOfLessons
+    required this.numberOfLessons,
+    required this.isFavorite
   });
 
   Map<String, dynamic> toJson() {
@@ -28,7 +30,7 @@ class Course{
       "name": name,
       "description": description,
       "price": price,
-      "timeDuration": timeDuration.inMinutes,
+      "timeDuration": timeDuration,
       "image": image,
       "author": author,
       "language": language,
@@ -42,11 +44,12 @@ class Course{
       name: json['name'],
       description: json['description'],
       price: json['price'],
-      timeDuration: Duration(minutes: json['timeDuration']),
+      timeDuration: json['timeDuration'],
       image: json['image'],
       author: json['author'],
       language: json['language'],
-      numberOfLessons: json['numberOfLessons']
+      numberOfLessons: json['numberOfLessons'],
+      isFavorite: json['isFavorite']
     );
 
   }
