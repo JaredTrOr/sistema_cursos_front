@@ -7,7 +7,7 @@ import 'package:sistema_cursos_front/models/courses_model.dart';
 class CoursesService extends ChangeNotifier {
   bool isLoading = false;
 
-  final List<Course> courses = [];
+  List<Course> courses = [];
   Course? _selectedCourse;
 
   final _db = FirebaseFirestore.instance;
@@ -16,23 +16,24 @@ class CoursesService extends ChangeNotifier {
     getCourses();
   }
 
-  Future<Map<String, dynamic>> getCourses() async {
+  Future<void> getCourses() async {
     try {
       isLoading = true;
       notifyListeners();
 
-      QuerySnapshot querySnapshot = await _db.collection('courses').get();
-      List<Course> courses = querySnapshot.docs.map((doc) => Course.fromJson({
+    QuerySnapshot querySnapshot = await _db.collection('courses').get();
+     courses.clear(); // Clear previous data to avoid duplication
+      courses.addAll(querySnapshot.docs.map((doc) => Course.fromJson({
         'id': doc.id,
         ...doc.data() as Map<String, dynamic>
-      })).toList();
+      })).toList());
 
       isLoading = false;
       notifyListeners();
-      return {'success': true, 'message': 'Cursos obtenidos exitosamente', 'data': courses};
 
     } catch(e) {
-      return {'success': false, 'message': 'Error al obtener cursos', 'error': e};
+      isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -105,10 +106,11 @@ class CoursesService extends ChangeNotifier {
     name: '',
     description: '',
     price: 0,
-    timeDuration: const Duration(minutes: 0),
+    timeDuration: '',
     image: '',
     author: '',
     language: '',
-    numberOfLessons: 0
+    numberOfLessons: 0,
+    isFavorite: false
   );
 }
