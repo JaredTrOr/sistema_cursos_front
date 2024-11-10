@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:sistema_cursos_front/models/courses_model.dart';
 
 class CardCurso extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String image;
-  final String price;
+  final Course course;
   final VoidCallback onTap; 
   final VoidCallback onFavorite; // Callback para manejar el clic en el favorito
   final bool isFavorite; // Nuevo parámetro para indicar si es favorito
 
   const CardCurso({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.image,
-    required this.price,
+    required this.course,
     required this.onTap,
     required this.onFavorite, // Asegúrate de que este parámetro sea requerido
     required this.isFavorite, // Asegúrate de que este parámetro sea requerido
@@ -29,26 +24,33 @@ class CardCurso extends StatelessWidget {
         color: Colors.grey.shade50,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox(height: 20),
+          children: [
+            const SizedBox(height: 20),
             ListTile(
               leading: SizedBox(
                 width: 80,
                 height: 80,
-                child: Image.network(image),
+                child: 
+                  course.image == '' ? 
+                  Image.asset('assets/no-image.png') : 
+                  FadeInImage(
+                    placeholder: const AssetImage('assets/jar-loading.gif'), 
+                    image: NetworkImage(course.image!)
+                  )
               ),
-              title: Text(title),
-              subtitle: Text(subtitle),
+              title: Text(course.name),
+              subtitle: Text(course.description),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
+              children: [
                 TextButton(
                   child: const Text('Agregar', style: TextStyle(color: Color(0xFF14919B)),),
-                  onPressed: () {}, 
+                  onPressed: () {
+                  }, 
                 ),
                 const SizedBox(width: 60),
-                Text(price),
+                Text(course.price.toString()),
                 const SizedBox(width: 20),
                 IconButton(
                   icon: Icon(
