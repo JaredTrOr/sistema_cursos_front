@@ -22,16 +22,18 @@ class CoursesService extends ChangeNotifier {
       notifyListeners();
 
     QuerySnapshot querySnapshot = await _db.collection('courses').get();
-     courses.clear(); // Clear previous data to avoid duplication
-      courses.addAll(querySnapshot.docs.map((doc) => Course.fromJson({
-        'id': doc.id,
-        ...doc.data() as Map<String, dynamic>
-      })).toList());
+    courses.clear();
+    courses.addAll(querySnapshot.docs.map((doc) => Course.fromJson({
+      'id': doc.id,
+      ...doc.data() as Map<String, dynamic>
+    })).toList());
 
       isLoading = false;
       notifyListeners();
 
     } catch(e) {
+      print('ERROR getCourses');
+      print(e);
       isLoading = false;
       notifyListeners();
     }
@@ -96,6 +98,34 @@ class CoursesService extends ChangeNotifier {
     }
   }
   
+  Future<void> increaseAmountOfFavorites(Course course) async {
+    try {
+      course.amountOfFavorites = course.amountOfFavorites + 1;
+      await _db.collection('courses').doc(course.id).update({
+        'amountOfFavorites': course.amountOfFavorites
+      });
+    } catch(e) {
+      print('ERROR increaseAmountOfFavorites');
+      print(e);
+    }
+  }
+
+  Future<void> decreaseAmountOfFavorites(Course course) async {
+    try {
+      course.amountOfFavorites = course.amountOfFavorites - 1;
+      await _db.collection('courses').doc(course.id).update({
+        'amountOfFavorites': course.amountOfFavorites
+      });
+    } catch(e) {
+      print('ERROR decreaseAmountOfFavorites');
+      print(e);
+    }
+  }
+
+  Course getCourseById(String id) {
+    return courses.firstWhere((course) => course.id == id);
+  }
+
   Course? get selectedCourse => _selectedCourse;
   set selectedCourse(Course? course) {
     _selectedCourse = course;
@@ -110,7 +140,6 @@ class CoursesService extends ChangeNotifier {
     image: '',
     author: '',
     language: '',
-    numberOfLessons: 0,
-    isFavorite: false
+    lessons: []
   );
 }
