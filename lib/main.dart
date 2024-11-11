@@ -16,7 +16,6 @@ import 'package:sistema_cursos_front/pages/usuario/home_usuario_page.dart';
 import 'package:sistema_cursos_front/pages/usuario/metodo_pago_page.dart';
 import 'package:sistema_cursos_front/pages/usuario/perfil_usuario_page.dart';
 import 'package:sistema_cursos_front/providers/cart_provider.dart';
-import 'package:sistema_cursos_front/providers/favorites_provider.dart';
 import 'package:sistema_cursos_front/services/courses_service.dart';
 import 'package:sistema_cursos_front/services/user_service.dart';
 
@@ -36,7 +35,6 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserService()),
         ChangeNotifierProvider(create: (context) => CoursesService()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
-        ChangeNotifierProvider(create: (context) => FavoritesProvider())
       ],
       child: const MyApp(),
     );
