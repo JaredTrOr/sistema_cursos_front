@@ -113,11 +113,34 @@ class UserService extends ChangeNotifier {
       return {'success': false, 'message': 'Error al eliminar usuario'};
     }
   }
-  
+
+  // Manejo de cursos favoritos
+  void addFavoriteCourse(String id) async {
+    userProvider.favoriteCourses.add(id);
+    await _db.collection('users').doc(userProvider.id).update({
+      'favoriteCourses': userProvider.favoriteCourses
+    });
+    notifyListeners();
+  }
+
+  void removeFavoriteCourse(String id) async {
+    userProvider.favoriteCourses.remove(id);
+    await _db.collection('users').doc(userProvider.id).update({
+      'favoriteCourses': userProvider.favoriteCourses
+    });
+    notifyListeners();
+  }
+
+  bool isFavoriteCourse(String id) {
+    return userProvider.favoriteCourses.contains(id);
+  }
+
   // Setter and getter of user provider
   User get userProvider => _userProvider!;
 
-  User get getEmptyUser => User(email: '', password: '', name: '', rol: 0, courses: [], image: '');
+  User get getEmptyUser => User(email: '', password: '', name: '', rol: 0, courses: [], image: '', favoriteCourses: []);
+
+  List<String> get getUserFavoriteCourses => _userProvider!.favoriteCourses;
   
   set userProvider(User user) {
     _userProvider = user;
