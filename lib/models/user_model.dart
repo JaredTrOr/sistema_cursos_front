@@ -5,6 +5,7 @@ class User {
   String password;
   String name;
   int rol = 0;
+  List<String> favoriteCourses;
   List<String> courses;
   String? image;
 
@@ -15,6 +16,7 @@ class User {
     required this.name,
     this.rol = 0,
     this.courses = const [],
+    this.favoriteCourses = const [],
     this.image = ''
   });
 
@@ -37,6 +39,7 @@ class User {
       name: json['name'],
       rol: json['rol'],
       courses: List<String>.from(json['courses']),
+      favoriteCourses: List<String>.from(json['favoriteCourses']),
       image: json['imagen']
     );
   }
