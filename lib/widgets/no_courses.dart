@@ -8,11 +8,12 @@ class NoCourses extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 150),
           const Icon(Icons.sentiment_dissatisfied, size: 100,),
           const SizedBox(height: 20),
-          Text(description, style: TextStyle(fontSize: 20),),
+          Text(description, style: const TextStyle(fontSize: 20),),
         ],
       ),
     );
