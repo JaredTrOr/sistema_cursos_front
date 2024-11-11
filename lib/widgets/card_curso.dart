@@ -4,15 +4,17 @@ import 'package:sistema_cursos_front/models/courses_model.dart';
 class CardCurso extends StatelessWidget {
   final Course course;
   final VoidCallback onTap; 
-  final VoidCallback onFavorite; // Callback para manejar el clic en el favorito
-  final bool isFavorite; // Nuevo parámetro para indicar si es favorito
+  final VoidCallback onAdd;
+  final VoidCallback onFavorite; 
+  final bool isFavorite; 
 
   const CardCurso({
     super.key,
     required this.course,
     required this.onTap,
-    required this.onFavorite, // Asegúrate de que este parámetro sea requerido
-    required this.isFavorite, // Asegúrate de que este parámetro sea requerido
+    required this.onFavorite, 
+    required this.onAdd,
+    required this.isFavorite, 
   });
 
   @override
@@ -45,9 +47,8 @@ class CardCurso extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  child: const Text('Agregar', style: TextStyle(color: Color(0xFF14919B)),),
-                  onPressed: () {
-                  }, 
+                  onPressed: onAdd,
+                  child: const Text('Agregar', style: TextStyle(color: Color(0xFF14919B)),), 
                 ),
                 const SizedBox(width: 60),
                 Text(course.price.toString()),
