@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sistema_cursos_front/providers/cart_provider.dart';
 import 'package:sistema_cursos_front/services/user_service.dart';
 import 'package:sistema_cursos_front/widgets/input_decoration.dart';
 import 'package:sistema_cursos_front/widgets/is_loading.dart';
@@ -39,6 +40,7 @@ class _LoginForm extends StatelessWidget {
 
     final formKey = GlobalKey<FormState>();
     final userService = Provider.of<UserService>(context);
+    final cartService = Provider.of<CartProvider>(context);
 
     Map<String, String> loginForm = {
       'email': '',
@@ -99,6 +101,7 @@ class _LoginForm extends StatelessWidget {
 
                     if (response['success']) {
                       userService.userProvider = response['data'];
+                      cartService.reset();
                       Navigator.pushNamed(context, userService.userProvider.rol == 0 ? 'navigation' : 'home_creador');
                     }
                     else {
