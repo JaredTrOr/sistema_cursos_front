@@ -3,7 +3,10 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:provider/provider.dart';
 import 'package:sistema_cursos_front/models/payment_model.dart';
+import 'package:sistema_cursos_front/models/purchase_model.dart';
+import 'package:sistema_cursos_front/providers/cart_provider.dart';
 import 'package:sistema_cursos_front/services/payment_service.dart';
+import 'package:sistema_cursos_front/services/purchase_service.dart';
 import 'package:sistema_cursos_front/services/user_service.dart';
 import 'package:sistema_cursos_front/widgets/is_loading.dart';
 import 'package:sistema_cursos_front/widgets/no_courses.dart';
@@ -22,8 +25,11 @@ class _MetodoPagoIntialitationState extends State<MetodoPagoPage> {
   Widget build(BuildContext context) {
     final userService = Provider.of<UserService>(context);
 
-    return ChangeNotifierProvider(
-      create: (context) => PaymentService(userService.userProvider.id),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => PurchaseService(userService.userProvider.id)),
+        ChangeNotifierProvider( create: (context) => PaymentService(userService.userProvider.id))
+      ],
       child: MetodoPagoContent(userService: userService),
     );
   }
@@ -154,6 +160,8 @@ class _MetodoPagoContentState extends State<MetodoPagoContent> {
 
     final paymentService = Provider.of<PaymentService>(context);
     final userService = Provider.of<UserService>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
+    final purchaseService = Provider.of<PurchaseService>(context);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -210,10 +218,51 @@ class _MetodoPagoContentState extends State<MetodoPagoContent> {
                 itemCount: paymentService.paymentMethods.length,
                 itemBuilder: (context, index) {
                   final payment = paymentService.paymentMethods[index];
-                  return _metodoPagoCard(
-                    '${payment.cardType}',
-                    onDelete: () => _eliminarMetodoPago(index, paymentService),
-                    payment: payment,
+                  return GestureDetector(
+                    onTap: () {
+                      popUpConfirmation(
+                        context: context, 
+                        title: 'Realizar compra', 
+                        body: Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            const Center(child: Text('¿Estás seguro de realizar la compra?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                            _displayProdcutsAndTotal(cartProvider),
+                            const SizedBox(height: 20),
+                          ],
+                        ), 
+                        onAccept: () {
+                          final purchase = Purchase(
+                            purchasedCoursesId: cartProvider.coursesCart.map((e) => e.id!).toList(), 
+                            purchaseDate: DateTime.now(), 
+                            buyerId: userService.userProvider.id!, 
+                            total: cartProvider.getTotal()
+                          );
+
+                          purchaseService.addPurchase(purchase).then((response) {
+                            if (response['success']) {
+                              popUp(context: context, title: 'Compra realizada', body: 'Compra realizada exitosamente', dialogType: 'success');
+                              userService.addNewPurchasedCourses(purchase.purchasedCoursesId);
+                              cartProvider.reset();
+
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                'navigation', // Target route (HomeUser screen)
+                                ModalRoute.withName('login'), // Keep only the 'login' route in the stack
+                              );
+                            }
+                            else {
+                              popUp(context: context, title: 'Error al realizar la compra', body: 'Error al realizar la compra', dialogType: 'error');
+                            }
+                          });
+                        }
+                      );
+                    },
+                    child: _metodoPagoCard(
+                      '${payment.cardType}',
+                      onDelete: () => _eliminarMetodoPago(index, paymentService),
+                      payment: payment,
+                    ),
                   );
                 },
               ),)
@@ -275,6 +324,34 @@ class _MetodoPagoContentState extends State<MetodoPagoContent> {
               onPressed: onDelete,
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _displayProdcutsAndTotal(CartProvider cartItems) {
+    return SizedBox(
+      height: 230, // Set a fixed height for the container
+      child: Column(
+      children: [
+        Expanded(
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: cartItems.coursesCart.length,
+          itemBuilder: (context, index) {
+          final item = cartItems.coursesCart[index];
+          return ListTile(
+            title: Text(item.name),
+            subtitle: Text(item.price.toString()),
+          );
+          },
+        ),
+        ),
+        const Divider(),
+        ListTile(
+        title: const Text('Total', style: TextStyle(fontWeight: FontWeight.bold),),
+        subtitle: Text(cartItems.getTotal().toString()),
+        ),
+      ],
       ),
     );
   }
