@@ -21,12 +21,12 @@ class CoursesService extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
-    QuerySnapshot querySnapshot = await _db.collection('courses').get();
-    courses.clear();
-    courses.addAll(querySnapshot.docs.map((doc) => Course.fromJson({
-      'id': doc.id,
-      ...doc.data() as Map<String, dynamic>
-    })).toList());
+      QuerySnapshot querySnapshot = await _db.collection('courses').get();
+      courses.clear();
+      courses.addAll(querySnapshot.docs.map((doc) => Course.fromJson({
+        'id': doc.id,
+        ...doc.data() as Map<String, dynamic>
+      })).toList());
 
       isLoading = false;
       notifyListeners();

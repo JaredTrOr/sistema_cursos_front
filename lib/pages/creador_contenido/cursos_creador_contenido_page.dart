@@ -37,7 +37,6 @@ class CursosCreadorContenidoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarPerfil(arrow: false),
       body: Column(
         children: [
           const SizedBox(height: 40),

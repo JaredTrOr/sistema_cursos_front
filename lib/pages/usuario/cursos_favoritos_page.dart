@@ -9,13 +9,16 @@ class CursosFavoritosPage extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
+            const SizedBox(height: 20),
+          const Center(child: Text("Mis cursos", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+            const SizedBox(height: 20),
+
             Card(
       elevation: 5,
       color:Colors.grey.shade200,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          SizedBox(height: 20),
           ListTile(
             leading: SizedBox(
               width: 70,
@@ -65,8 +68,6 @@ class CursosFavoritosPage extends StatelessWidget {
                 Text("80% Completado"),
                         ],
                       ),
-                      SizedBox(width: 50,),
-                      Icon(Icons.pause, size: 50)
                     ],
                   )
                 ],

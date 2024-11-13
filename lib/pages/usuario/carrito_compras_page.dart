@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sistema_cursos_front/providers/cart_provider.dart';
 import 'package:sistema_cursos_front/widgets/no_courses.dart';
+import 'package:sistema_cursos_front/widgets/pop_up.dart';
 
 class CarritoComprasPage extends StatelessWidget {
   const CarritoComprasPage({super.key});
@@ -78,6 +79,11 @@ class CarritoComprasPage extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   color: const Color(0xFF14919B),
                   onPressed: () {
+                    if (cartProvider.coursesCart.isEmpty) {
+                      popUp(context: context, title: 'Advertencia', body: 'No puedes realizar la compra, no tienes productos en el carrito', dialogType: 'warning');
+                      return;
+                    }
+                    
                     Navigator.pushNamed(context, 'metodo_pago');
                   },
                   // onPressed: loginForm.isLoading
