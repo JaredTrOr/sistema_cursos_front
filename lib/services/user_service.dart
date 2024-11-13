@@ -115,20 +115,66 @@ class UserService extends ChangeNotifier {
   }
 
   // Manejo de cursos favoritos
-  void addFavoriteCourse(String id) async {
-    userProvider.favoriteCourses.add(id);
-    await _db.collection('users').doc(userProvider.id).update({
-      'favoriteCourses': userProvider.favoriteCourses
-    });
-    notifyListeners();
+  Future<void> addFavoriteCourse(String id) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      userProvider.favoriteCourses.add(id);
+      await _db.collection('users').doc(userProvider.id).update({
+        'favoriteCourses': userProvider.favoriteCourses
+      });
+
+      isLoading = false;
+      notifyListeners();
+    } catch(e) {
+      isLoading = false;
+      notifyListeners();
+      print('Error al agregar curso favorito');
+      print(e);
+    }
+    
   }
 
-  void removeFavoriteCourse(String id) async {
-    userProvider.favoriteCourses.remove(id);
-    await _db.collection('users').doc(userProvider.id).update({
-      'favoriteCourses': userProvider.favoriteCourses
-    });
-    notifyListeners();
+  Future<void> removeFavoriteCourse(String id) async {
+
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      userProvider.favoriteCourses.remove(id);
+      await _db.collection('users').doc(userProvider.id).update({
+        'favoriteCourses': userProvider.favoriteCourses
+      });
+
+      isLoading = false;
+      notifyListeners();
+    } catch(e) {
+      isLoading = false;
+      notifyListeners();
+      print('Error al eliminar curso favorito');
+      print(e);
+    }
+  }
+
+  addNewPurchasedCourses(List<String> purchasedCourses) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      userProvider.courses.addAll(purchasedCourses);
+      await _db.collection('users').doc(userProvider.id).update({
+        'courses': userProvider.courses
+      });
+
+      isLoading = false;
+      notifyListeners();
+    } catch(e) {
+      isLoading = false;
+      notifyListeners();
+      print('Error al agregar cursos comprados');
+      print(e);
+    }
   }
 
   bool isFavoriteCourse(String id) {
