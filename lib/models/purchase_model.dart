@@ -1,31 +1,35 @@
 class Purchase {
   
   String? id;
-  String purchasedCourseId;
+  List<String> purchasedCoursesId;
   DateTime purchaseDate;
   String buyerId;
+  double total;
 
   Purchase({
     this.id,
-    required this.purchasedCourseId,
+    required this.purchasedCoursesId,
     required this.purchaseDate,
-    required this.buyerId
+    required this.buyerId,
+    required this.total
   });
 
   Map<String, dynamic> toJson() {
     return {
-      "purchasedCourseId": purchasedCourseId,
+      "purchasedCoursesId": purchasedCoursesId,
       "purchaseDate": purchaseDate,
-      "buyerId": buyerId
+      "buyerId": buyerId,
+      'total': total
     };
   }
 
   factory Purchase.fromJson(Map<String, dynamic> json) {
     return Purchase(
       id: json['id'],
-      purchasedCourseId: json['purchasedCourseId'],
+      purchasedCoursesId: List<String>.from(json['purchasedCoursesId']),
       purchaseDate: json['purchaseDate'].toDate(),
-      buyerId: json['buyerId']
+      buyerId: json['buyerId'],
+      total: json['total']
     );
   }
 
