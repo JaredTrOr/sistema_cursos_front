@@ -1,67 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:provider/provider.dart';
+import 'package:sistema_cursos_front/models/payment_model.dart';
+import 'package:sistema_cursos_front/services/payment_service.dart';
+import 'package:sistema_cursos_front/services/user_service.dart';
+import 'package:sistema_cursos_front/widgets/is_loading.dart';
+import 'package:sistema_cursos_front/widgets/no_courses.dart';
+import 'package:sistema_cursos_front/widgets/pop_up.dart';
+import 'package:sistema_cursos_front/widgets/pop_up_confirmation.dart';
 
 class MetodoPagoPage extends StatefulWidget {
   const MetodoPagoPage({super.key});
 
   @override
-  _MetodoPagoPageState createState() => _MetodoPagoPageState();
+  _MetodoPagoIntialitationState createState() => _MetodoPagoIntialitationState();
 }
 
-class _MetodoPagoPageState extends State<MetodoPagoPage> {
-  List<String> metodosPago = ["Visa", "Paypal"];
-  List<String> nuevosMetodosPago = [];
+class _MetodoPagoIntialitationState extends State<MetodoPagoPage> {
+  @override
+  Widget build(BuildContext context) {
+    final userService = Provider.of<UserService>(context);
 
+    return ChangeNotifierProvider(
+      create: (context) => PaymentService(userService.userProvider.id),
+      child: MetodoPagoContent(userService: userService),
+    );
+  }
+}
+
+class MetodoPagoContent extends StatefulWidget {
+  final UserService userService;
+  const MetodoPagoContent({Key? key, required this.userService}) : super(key: key);
+
+  @override
+  State<MetodoPagoContent> createState() => _MetodoPagoContentState();
+}
+
+class _MetodoPagoContentState extends State<MetodoPagoContent> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  List<String> metodosPago = ["Visa", "Paypal"];
   String cardNumber = '', expiryDate = '', cardHolderName = '', cvvCode = '';
   bool isCvvFocused = false;
   String tipoTarjeta = "Visa";
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  void _mostrarDialogo(bool isEditMode, [int? index]) {
-    String cardNumber =
-        isEditMode ? nuevosMetodosPago[index!].split(", ")[1] : '';
-    String expiryDate = isEditMode
-        ? nuevosMetodosPago[index!].split(", ")[2].split("Exp: ")[1]
-        : '';
-    String cardHolderName = isEditMode
-        ? nuevosMetodosPago[index!].split(", ")[0].split(": ")[1]
-        : '';
-    String cvvCode = '';
-    // bool isCvvFocused = false;
-
-    // final TextEditingController cardHolderNameController =
-    //     TextEditingController(text: cardHolderName);
-    // final TextEditingController cardNumberController =
-    //     TextEditingController(text: cardNumber);
-    // final TextEditingController expiryDateController =
-    //     TextEditingController(text: expiryDate);
+  void _mostrarDialogo(String tipoTarjeta, UserService userService, PaymentService paymentService) {
+    // Reset values each time the dialog is shown
+    cardNumber = '';
+    expiryDate = '';
+    cardHolderName = '';
+    cvvCode = '';
 
     AwesomeDialog(
       context: context,
       dialogType: DialogType.noHeader,
-      title: isEditMode ? 'Editar Método de Pago' : 'Agregar Método de Pago',
+      title: 'Agregar Método de Pago - $tipoTarjeta',
       body: Column(
         children: [
-          DropdownButtonFormField<String>(
-            value: tipoTarjeta,
-            items: [
-              'Visa',
-              'Paypal',
-            ].map((String tipo) {
-              return DropdownMenuItem<String>(
-                value: tipo,
-                child: Text(tipo),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                tipoTarjeta = value!;
-              });
-            },
-            decoration: _inputDecoration('Tipo de Tarjeta', ''),
-          ),
+          Text('Agregar Método de Pago - $tipoTarjeta', style: const TextStyle(fontWeight: FontWeight.bold),),
           CreditCardForm(
             formKey: formKey,
             cardNumber: cardNumber,
@@ -70,36 +66,49 @@ class _MetodoPagoPageState extends State<MetodoPagoPage> {
             cvvCode: cvvCode,
             onCreditCardModelChange: (CreditCardModel? creditCardModel) {
               if (creditCardModel != null) {
-                cardNumber = creditCardModel.cardNumber;
-                expiryDate = creditCardModel.expiryDate;
-                cardHolderName = creditCardModel.cardHolderName;
-                cvvCode = creditCardModel.cvvCode;
-                isCvvFocused = creditCardModel.isCvvFocused;
+                setState(() {
+                  cardNumber = creditCardModel.cardNumber;
+                  expiryDate = creditCardModel.expiryDate;
+                  cardHolderName = creditCardModel.cardHolderName;
+                  cvvCode = creditCardModel.cvvCode;
+                  isCvvFocused = creditCardModel.isCvvFocused;
+                });
               }
             },
             themeColor: Colors.blue,
             cardNumberDecoration:
                 _inputDecoration('Número de Tarjeta', 'XXXX XXXX XXXX XXXX'),
-            expiryDateDecoration:
-                _inputDecoration('Fecha de Expiración', 'MM/AA'),
+            expiryDateDecoration: _inputDecoration('Fecha de Expiración', 'MM/AA'),
             cvvCodeDecoration: _inputDecoration('CVV', 'XXX'),
             cardHolderDecoration: _inputDecoration('Nombre del Titular', ''),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
         ],
       ),
       btnOkOnPress: () {
-        // if (formKey.currentState!.validate()) {
-        //   setState(() {
-        //     String newMetodo =
-        //         '$tipoTarjeta: $cardHolderName, $cardNumber, Exp: $expiryDate';
-        //     if (isEditMode) {
-        //       nuevosMetodosPago[index!] = newMetodo;
-        //     } else {
-        //       nuevosMetodosPago.add(newMetodo);
-        //     }
-        //   });
-        // }
+        if (formKey.currentState!.validate()) {
+          
+          final payment = PaymentModel(
+            cardType: tipoTarjeta,
+            cardNumber: cardNumber,
+            cardHolder: cardHolderName,
+            expirationDate: expiryDate,
+            cvv: cvvCode,
+            ownerId: userService.userProvider.id!,
+          );
+
+          paymentService.addPaymentMethod(payment).then((response) {
+            if (response['success']) {
+              // popUp(context: context, title: 'Método de Pago Agregado', body: 'Método de Pago Agregado Exitosamente', dialogType: 'success');
+            } else {
+              popUp(context: context, title: 'Error al Agregar Método de Pago', body: 'Error al Agregar Método de Pago', dialogType: 'error');
+            }
+          }).catchError((error) {
+              popUp(context: context, title: 'Error de petición', body: 'Error al Agregar Método de Pago', dialogType: 'error');
+          });
+          // setState(() {});
+        }
+        else {}
       },
       btnCancelOnPress: () {},
     ).show();
@@ -109,43 +118,52 @@ class _MetodoPagoPageState extends State<MetodoPagoPage> {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      border: OutlineInputBorder(),
+      border: const OutlineInputBorder(),
     );
   }
 
-  void onCreditCardModelChange(CreditCardModel? creditCardModel) {
-    setState(() {
-      cardNumber = creditCardModel?.cardNumber ?? '';
-      expiryDate = creditCardModel?.expiryDate ?? '';
-      cardHolderName = creditCardModel?.cardHolderName ?? '';
-      cvvCode = creditCardModel?.cvvCode ?? '';
-      isCvvFocused = creditCardModel?.isCvvFocused ?? false;
-    });
-  }
+  void _eliminarMetodoPago(int index, PaymentService paymentService) {
 
-  void _eliminarMetodoPago(int index) {
-    AwesomeDialog(
-      context: context,
-      dialogType: DialogType.warning,
-      title: 'Eliminar Método de Pago',
-      desc: '¿Estás seguro de eliminar este método?',
-      btnOkText: 'Eliminar',
-      btnOkOnPress: () => setState(() => nuevosMetodosPago.removeAt(index)),
-      btnCancelOnPress: () {},
-    ).show();
+    popUpConfirmation(
+      context: context, 
+      title: 'Eliminar Método de Pago', 
+      body: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 10),
+          Center(child: Text('¿Estás seguro de eliminar este método de pago?', style: TextStyle(fontSize: 16))),
+          SizedBox(height: 20),
+        ],
+      ), 
+      onAccept: () {
+        paymentService.removePaymentMethod(index).then((response) {
+        if (response['success']) {
+          // popUp(context: context, title: 'Método de Pago Eliminado', body: 'Método de Pago Eliminado Exitosamente', dialogType: 'success');
+        } else {
+          popUp(context: context, title: 'Error al Eliminar Método de Pago', body: 'Error al Eliminar Método de Pago', dialogType: 'error');
+        }
+      }).catchError((error) {
+          popUp(context: context, title: 'Error de petición', body: 'Error al Eliminar Método de Pago', dialogType: 'error');
+      });
+      }
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final paymentService = Provider.of<PaymentService>(context);
+    final userService = Provider.of<UserService>(context);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               alignment: Alignment.center,
-              margin: const EdgeInsets.only(top: 64, bottom: 16),
+              margin: const EdgeInsets.only(top: 64),
               child: const Text(
-                'Métodos de Pago',
+                'Selecciona un Método de Pago',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -157,80 +175,105 @@ class _MetodoPagoPageState extends State<MetodoPagoPage> {
               height: 250,
               child: ListView.builder(
                 itemCount: metodosPago.length,
-                itemBuilder: (context, index) => GestureDetector(
-                  onTap: () {
-                    _mostrarDialogo(false);
-                  },
-                  child: _metodoPagoCard(metodosPago[index]),
-                ),
+                itemBuilder: (context, index) {
+                  final metodo = metodosPago[index];
+                  return GestureDetector(
+                    onTap: () => _mostrarDialogo(metodo, userService, paymentService),
+                    child: _metodoPagoCard(metodo),
+                  );
+                },
               ),
             ),
+            const Divider(),
             Container(
               alignment: Alignment.center,
-              margin: const EdgeInsets.only(top: 64, bottom: 16),
+              margin: const EdgeInsets.only(top: 16),
               child: const Text(
-                'Disponibles',
+                'Métodos de Pago Agregados',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF14919B),
                 ),
               ),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: nuevosMetodosPago.length,
-              itemBuilder: (context, index) {
-                return _metodoPagoCard(
-                  nuevosMetodosPago[index],
-                  onEdit: () => _mostrarDialogo(true, index),
-                  onDelete: () => _eliminarMetodoPago(index),
-                );
-              },
-            ),
+            paymentService.isLoading ? const Column(
+              children: [
+                SizedBox(height: 60),
+                IsLoading(),
+              ],
+            ) :
+            paymentService.paymentMethods.isNotEmpty ? 
+            SizedBox(
+              height: 200, // Specify the height based on your UI requirements
+              child: ListView.builder(
+                itemCount: paymentService.paymentMethods.length,
+                itemBuilder: (context, index) {
+                  final payment = paymentService.paymentMethods[index];
+                  return _metodoPagoCard(
+                    '${payment.cardType}',
+                    onDelete: () => _eliminarMetodoPago(index, paymentService),
+                    payment: payment,
+                  );
+                },
+              ),)
+              : const Column(
+                  children: [
+                    SizedBox(height: 60),
+                    NoCourses(description: 'No hay métodos de pago'),
+                  ],
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _metodoPagoCard(String metodoPago, { VoidCallback? onEdit, VoidCallback? onDelete }) {
-
-    print('MÉTODO DE PAGO');
-    print(metodoPago);
+  Widget _metodoPagoCard(String metodoPago, {VoidCallback? onDelete, PaymentModel? payment}) {
     return Container(
       height: 80,
+      width: 180,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFF14919B), width: 2),
+        border: Border.all(color: const Color(0xFF14919B), width: 2),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(16),
       child: Row(
-        children: [ 
+        children: [
           Image(
             image: AssetImage(
-                'assets/${metodoPago.contains(':') ? metodoPago.split(":")[0].toLowerCase() : metodoPago}.png'),
+                'assets/${metodoPago.toLowerCase()}.png'),
             width: 50,
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: Text(
+            child: 
+            payment == null ?
+            Text(
               metodoPago,
-              style: TextStyle(fontSize: 16),
-            ),
+              style: const TextStyle(fontSize: 16),
+            )
+            :
+            Column(
+              children: [
+                Text(
+                  metodoPago,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                Text(
+                  '**** **** **** ${payment.cardNumber.substring(payment.cardNumber.length - 4)}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
+            )
+            ,
           ),
-          if (onEdit != null && onDelete != null) ...[
+          if (onDelete != null)
             IconButton(
-              icon: Icon(Icons.edit, color: Colors.blue),
-              onPressed: onEdit,
-            ),
-            IconButton(
-              icon: Icon(Icons.delete, color: Colors.red),
+              icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: onDelete,
             ),
-          ],
         ],
       ),
     );
