@@ -27,6 +27,7 @@ class User {
       "name": name,
       "rol": rol,
       "courses": courses,
+      "favoriteCourses": favoriteCourses,
       "image": image
     };
   }
