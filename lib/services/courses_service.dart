@@ -126,6 +126,14 @@ class CoursesService extends ChangeNotifier {
     return courses.firstWhere((course) => course.id == id);
   }
 
+  List<Course> getCoursesById(List<String> idList) {
+    return courses.where((course) => idList.contains(course.id)).toList();
+  }
+
+  bool isCoursePurchased(String courseId, List<String> userCourses) {
+    return userCourses.contains(courseId);
+  }
+
   Course? get selectedCourse => _selectedCourse;
   set selectedCourse(Course? course) {
     _selectedCourse = course;
