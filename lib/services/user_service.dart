@@ -27,6 +27,7 @@ class UserService extends ChangeNotifier {
       
       DocumentReference docRef = await _db.collection('users').add(user.toJson());
       DocumentSnapshot docSnapshot = await docRef.get();
+      
       User userData = User.fromJson({
         'id': docSnapshot.id,
         ...docSnapshot.data() as Map<String, dynamic>
@@ -37,6 +38,8 @@ class UserService extends ChangeNotifier {
       return {'success': true, 'message': 'Usuario registrado exitosamente', 'data': userData};
 
     } catch (e) {
+      print('Error en signup');
+      print(e);
       isLoading = false;
       notifyListeners();
       return {'success': false, 'message': 'Error al registrar usuario', 'error': e};
@@ -79,23 +82,36 @@ class UserService extends ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> updateUser(User user) async {
-    try {
-      isLoading = true;
-      notifyListeners();
+  try {
+    isLoading = true;
+    notifyListeners();
 
-      await _db.collection('users').doc(user.id).update(user.toJson());
-      userProvider = user;
+    QuerySnapshot existingUser = await _db.collection('users')
+      .where('email', isEqualTo: user.email)
+      .where(FieldPath.documentId, isNotEqualTo: user.id)
+      .limit(1)
+      .get();
 
+    if (existingUser.docs.isNotEmpty) {
       isLoading = false;
       notifyListeners();
-
-      return {'success': true, 'message': 'Usuario actualizado exitosamente'};
-    } catch (e) {
-      isLoading = false;
-      notifyListeners();
-      return {'success': false, 'message': 'Error al actualizar usuario'};
+      return {'success': false, 'message': 'El correo ya está registrado por otro usuario'};
     }
+
+    await _db.collection('users').doc(user.id).update(user.toJson());
+
+    userProvider = user;
+
+    isLoading = false;
+    notifyListeners();
+
+    return {'success': true, 'message': 'Usuario actualizado exitosamente'};
+  } catch (e) {
+    isLoading = false;
+    notifyListeners();
+    return {'success': false, 'message': 'Error al actualizar usuario'};
   }
+}
 
   Future<Map<String, dynamic>> deleteUser(String userId) async {
     try {
@@ -181,12 +197,18 @@ class UserService extends ChangeNotifier {
     return userProvider.favoriteCourses.contains(id);
   }
 
+  bool isBeingPurchased(String id) {
+    return userProvider.courses.contains(id);
+  }
+
   // Setter and getter of user provider
   User get userProvider => _userProvider!;
 
   User get getEmptyUser => User(email: '', password: '', name: '', rol: 0, courses: [], image: '', favoriteCourses: []);
 
   List<String> get getUserFavoriteCourses => _userProvider!.favoriteCourses;
+
+  List<String> get getUserCourses => _userProvider!.courses;
   
   set userProvider(User user) {
     _userProvider = user;
