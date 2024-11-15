@@ -1,137 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sistema_cursos_front/services/user_service.dart';
+import 'package:sistema_cursos_front/widgets/input_decoration.dart';
+import 'package:sistema_cursos_front/widgets/is_loading.dart';
+import 'package:sistema_cursos_front/widgets/pop_up.dart';
 
 class PerfilUsuarioPage extends StatelessWidget {
   const PerfilUsuarioPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final formKey = GlobalKey<FormState>();
+    final userService = Provider.of<UserService>(context);
+    final userProvider = userService.userProvider;
+
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 80,
-          ),
-          Center(
-            child: Icon(
-              Icons.person_pin,
-              size: 160,
-              color: Color(0xFF213A57),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox( height: 35,),
+            const Center(
+              child: Icon(
+                Icons.person_pin,
+                size: 160,
+                color: Color(0xFF213A57),
+              ),
             ),
-          ),
-          Text(
-            "Editar",
-            style: TextStyle(
-              fontSize: 30,
-              color: Color(0xFF0B6477),
+            Text(
+              userProvider.name,
+              style: const TextStyle(
+                fontSize: 30,
+                color: Color(0xFF0B6477),
+              ),
             ),
-          ),
-          Container(
-            child: Padding(
+            const SizedBox(
+              height: 40,
+            ),
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
               child: Form(
+                key: formKey,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(
                   children: [
                     TextFormField(
+                      initialValue: userProvider.name,
                       autocorrect: false,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xFF14919B),
-                          ),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xFF14919B),
-                            width: 2,
-                          ),
-                        ),
-                        hintText: 'Ejemplo: juan.perez@gmail.com',
-                        labelText: 'Correo electrónico',
-                        labelStyle: TextStyle(
-                          color: Colors.grey,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.alternate_email_sharp,
-                          color: Color(0xFF14919B),
-                        ),
-                      ),
-                      validator: (value) {
-                        String pattern =
-                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                        RegExp regExp = RegExp(pattern);
-                        return regExp.hasMatch(value ?? '')
-                            ? null
-                            : 'El correo no es válido';
+                      decoration: inputDecoration('Nombre', 'Escriba su nombre', Icons.person),
+                      onChanged: (value) => userProvider.name = value,
+                      validator: (value) { 
+                        if (value != null && value.length >= 3) {
+                          return null;
+                        }
+                        return 'El nombre debe tener al menos 3 caracteres';
                       },
                     ),
-                    SizedBox(height: 30),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        autocorrect: false,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xFF14919B),
-                            ),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color(0xFF14919B),
-                              width: 2,
-                            ),
-                          ),
-                          hintText: '**********',
-                          labelText: 'Contraseña:',
-                          labelStyle: TextStyle(
-                            color: Colors.grey,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.lock_outline,
-                            color: Color(0xFF14919B),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value != null && value.length >= 6) return null;
-                          return 'La contraseña debe tener al menos 6 caracteres';
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    // Eliminar el botón y la lógica de carga
+            const SizedBox(height: 30),
+            TextFormField(
+              initialValue: userProvider.email,
+              autocorrect: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration: inputDecoration('Correo electrónico', 'Ejemplo juan.perez@gmail.com', Icons.alternate_email),
+              onChanged: (value) => userProvider.email = value,
+              validator: (value) {
+                String pattern =
+                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                RegExp regExp = RegExp(pattern);
+                return regExp.hasMatch(value ?? '')
+                    ? null
+                    : 'El correo no es válido';
+              },
+            ),
+            const SizedBox(height: 30),
+            TextFormField(
+              initialValue: userProvider.password,
+              autocorrect: false,
+              obscureText: true,
+              keyboardType: TextInputType.emailAddress,
+              decoration: inputDecoration('Contraseña', '******', Icons.lock_outline),
+              onChanged: (value) => userProvider.password = value,
+              validator: (value) {
+                if (value != null && value.length >= 6) {
+                  return null;
+                }
+
+                return 'La contraseña debe tener al menos 6 caracteres';
+              },
+            ),
                   ],
                 ),
               ),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text(
-              "Guardar",
-              style: TextStyle(color: Colors.black, fontSize: 20),
+            const SizedBox(height: 25),
+            userService.isLoading ? const IsLoading() 
+            :
+            ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState?.validate() ?? false) {
+
+                  userService.updateUser(userProvider).then((response) {
+
+                    if (response['success']) {
+                      popUp(context: context, title: 'Usuario actualizado', body: 'El perfil ha sido actualizado exitosamente', dialogType: 'success');
+                    } else {
+                      popUp(context: context, title: 'Error', body: response['message'], dialogType: 'warning');
+                    }
+                  }).catchError((error) {
+                    popUp(context: context, title: 'Error', body: 'Error al registrar usuario', dialogType: 'error');
+                  });
+                 
+                }
+              },
+              style: const ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(Color(0xFF80ED99)),
+                minimumSize: WidgetStatePropertyAll(Size(250, 50)),
+              ),
+
+              child: const Text(
+                "Guardar",
+                style: TextStyle(color: Colors.black, fontSize: 20),
+              ),
             ),
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Color(0xFF80ED99)),
-              minimumSize: WidgetStatePropertyAll(Size(250, 50)),
+            const SizedBox(
+              height: 20,
             ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text("Cancelar",
-                style: TextStyle(color: Colors.black, fontSize: 20)),
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Colors.red),
-              minimumSize: WidgetStatePropertyAll(Size(150, 50)),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
