@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sistema_cursos_front/models/courses_model.dart';
+import 'package:sistema_cursos_front/services/user_service.dart';
 
 class CardCurso extends StatelessWidget {
   final Course course;
@@ -19,6 +21,11 @@ class CardCurso extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userService = Provider.of<UserService>(context);
+    
+    // Check if the course is already bought by the user
+    final isBought = userService.getUserCourses.any((id) => id == course.id);
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -46,10 +53,25 @@ class CardCurso extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                  onPressed: onAdd,
-                  child: const Text('Agregar', style: TextStyle(color: Color(0xFF14919B)),), 
-                ),
+                if (isBought)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'Comprado',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                else
+                  TextButton(
+                    onPressed: onAdd,
+                    child: const Text(
+                      'Agregar',
+                      style: TextStyle(color: Color(0xFF14919B)),
+                    ), 
+                  ),
                 const SizedBox(width: 60),
                 Text(course.price.toString()),
                 const SizedBox(width: 20),
