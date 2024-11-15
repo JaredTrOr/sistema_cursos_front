@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sistema_cursos_front/pages/usuario/curso_page.dart';
 import 'package:sistema_cursos_front/providers/cart_provider.dart';
 import 'package:sistema_cursos_front/services/courses_service.dart';
 import 'package:sistema_cursos_front/services/user_service.dart';
@@ -28,6 +29,9 @@ class HomeUsuarioPage extends StatelessWidget {
           itemCount: courseService.courses.length,
           itemBuilder: (context, index) {
             final course = courseService.courses[index];
+
+            bool isPurchased = userService.isBeingPurchased(course.id!);
+
             return CardCurso(
               course: course,
               onAdd: () {
@@ -40,12 +44,12 @@ class HomeUsuarioPage extends StatelessWidget {
                 popUp(context: context, title: 'Atención', body: 'Este curso ya esta en el carrito', dialogType: 'info');
               },
               onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => CursoPage(course: course),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CursoPage(course: course, permission: isPurchased,),
+                          ),
+                        );
               },
               onFavorite: () { 
                 if (!userService.isFavoriteCourse(course.id!)) {

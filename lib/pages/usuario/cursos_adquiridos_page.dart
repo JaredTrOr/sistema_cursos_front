@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sistema_cursos_front/pages/usuario/curso_page.dart';
 import 'package:sistema_cursos_front/services/courses_service.dart';
 import 'package:sistema_cursos_front/services/user_service.dart';
 import 'package:sistema_cursos_front/widgets/card_curso.dart';
@@ -27,12 +28,22 @@ class CursosAdquiridosPage extends StatelessWidget {
                         String courseId = userService.getUserFavoriteCourses[index];
                         final course = courseService.getCourseById(courseId);
 
+                        bool isPurchased = userService.isBeingPurchased(course.id!);
+
+
                         return CardCurso(
                           course: course,
                           onAdd: () {
                             
                           },
-                          onTap: () { },
+                          onTap: () { 
+                            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CursoPage(course: course, permission: isPurchased,),
+                            ),
+                          );
+                          },
                           onFavorite: () {
                             if (!userService.isFavoriteCourse(course.id!)) {
                               userService.addFavoriteCourse(course.id!);
