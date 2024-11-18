@@ -8,6 +8,7 @@ class Course{
   String timeDuration;
   String? image;
   String author;
+  String? authorId;
   String language;
   List<dynamic> lessons;
   int amountOfFavorites;
@@ -22,7 +23,8 @@ class Course{
     required this.author,
     required this.language,
     this.lessons = const[],
-    this.amountOfFavorites = 0
+    this.amountOfFavorites = 0,
+    this.authorId
   });
 
   Map<String, dynamic> toJson() {
@@ -35,7 +37,8 @@ class Course{
       "author": author,
       "language": language,
       "lessons": lessons,
-      "amountOfFavorites": amountOfFavorites
+      "amountOfFavorites": amountOfFavorites,
+      "authorId": authorId
     };
   }
 
@@ -50,7 +53,8 @@ class Course{
       author: json['author'],
       language: json['language'],
       lessons: json['lessons'],
-      amountOfFavorites: json['amountOfFavorites']
+      amountOfFavorites: json['amountOfFavorites'],
+      authorId: json['authorId']
     );
 
   }
