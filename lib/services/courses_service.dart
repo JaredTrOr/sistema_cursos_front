@@ -1,18 +1,25 @@
 import 'dart:async';
-
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sistema_cursos_front/models/courses_model.dart';
+import 'dart:convert';
 
 class CoursesService extends ChangeNotifier {
   bool isLoading = false;
 
   List<Course> courses = [];
   Course? _selectedCourse;
+  File? courseImage;
 
   final _db = FirebaseFirestore.instance;
 
-  CoursesService() {
+  CoursesService({ String? authorId }) {
+    if (authorId != null) {
+      getCoursesByAuthorId(authorId);
+      return;
+    } 
     getCourses();
   }
 
@@ -39,6 +46,28 @@ class CoursesService extends ChangeNotifier {
     }
   }
 
+  Future<void> getCoursesByAuthorId(String id) async {
+    try {
+      isLoading = true;
+      notifyListeners(); 
+
+      QuerySnapshot querySnapshot = await _db.collection('courses').where('authorId', isEqualTo: id).get();
+      courses.clear();
+      courses.addAll(querySnapshot.docs.map((doc) => Course.fromJson({
+        'id': doc.id,
+        ...doc.data() as Map<String, dynamic>
+      })).toList());
+
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      print('ERROR getCoursesByAuthorId');
+      print(e);
+    }
+  }
+
   Future<Map<String, dynamic>> addCourse(Course course) async {
     try {
       isLoading = true;
@@ -50,12 +79,15 @@ class CoursesService extends ChangeNotifier {
         'id': docSnapshot.id,
         ...docSnapshot.data() as Map<String, dynamic>
       });
+      courses.add(courseData);
 
       isLoading = false;
       notifyListeners();
       return {'success': true, 'message': 'Curso agregado exitosamente', 'data': courseData};
 
     } catch(e) {
+      print('Error addCourse');
+      print(e);
       isLoading = false;
       notifyListeners();
       return {'success': false, 'message': 'Error al agregar curso', 'error': e};
@@ -68,12 +100,16 @@ class CoursesService extends ChangeNotifier {
       notifyListeners();
 
       await _db.collection('courses').doc(course.id).update(course.toJson());
+      //Update the course in the list
+      courses = courses.map((c) => c.id == course.id ? course : c).toList();
 
       isLoading = false;
       notifyListeners();
       return {'success': true, 'message': 'Curso actualizado exitosamente'};
 
     } catch(e) {
+      print('Error updateCourse');
+      print(e);
       isLoading = false;
       notifyListeners();
       return {'success': false, 'message': 'Error al actualizar curso', 'error': e};
@@ -85,6 +121,14 @@ class CoursesService extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
+      // Check if the course has already been bought by a user
+      QuerySnapshot querySnapshot = await _db.collection('users').where('courses', arrayContains: id).get();
+      if (querySnapshot.docs.isNotEmpty) {
+        isLoading = false;
+        notifyListeners();
+        return {'success': false, 'message': 'El curso ya ha sido adquirido por un usuario'};
+      }
+      
       await _db.collection('courses').doc(id).delete();
 
       isLoading = false;
@@ -132,6 +176,41 @@ class CoursesService extends ChangeNotifier {
 
   bool isCoursePurchased(String courseId, List<String> userCourses) {
     return userCourses.contains(courseId);
+  }
+  
+  void updateImage(String path) {
+    _selectedCourse!.image = path;
+    courseImage = File.fromUri(Uri(path: path));
+    notifyListeners();
+  }
+
+  Future<String?> subirImagen() async {
+
+    const clodinaryUrl = 'https://api.cloudinary.com/v1_1/dwpkveemt/image/upload?upload_preset=image-storage';
+
+    if (courseImage == null) return null;
+
+    isLoading = true;
+    notifyListeners();
+
+    final url = Uri.parse(clodinaryUrl); // Url para cloudinary
+    final imageUploadRequest = http.MultipartRequest('POST', url);
+
+    final file = await http.MultipartFile.fromPath('file', courseImage!.path);
+    imageUploadRequest.files.add(file);
+
+    final streamResponse = await imageUploadRequest.send();
+    final resp = await http.Response.fromStream(streamResponse);
+
+    if (resp.statusCode != 200 && resp.statusCode != 201) {
+      print('Error en la petición');
+      return null;
+    }
+
+    courseImage = null;
+    final decodedData = json.decode(resp.body);
+    return decodedData['secure_url'];
+
   }
 
   Course? get selectedCourse => _selectedCourse;
