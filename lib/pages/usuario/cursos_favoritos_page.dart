@@ -48,9 +48,13 @@ class CursosFavoritosPage extends StatelessWidget {
                             leading: SizedBox(
                               width: 70,
                               height: 100,
-                              child: Image.network(
-                                course.image!,
-                              ),
+                              child: course.image == null || course.image == ''
+                                    ? const Image(image: AssetImage('assets/no-image.png'), fit: BoxFit.cover,)
+                                    : FadeInImage(
+                                        placeholder: const AssetImage('assets/jar-loading.gif'), 
+                                        image: NetworkImage(course.image!),
+                                        fit: BoxFit.cover,
+                                      )
                             ),
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

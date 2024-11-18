@@ -40,7 +40,7 @@ class CardCurso extends StatelessWidget {
                 width: 80,
                 height: 80,
                 child: 
-                  course.image == '' ? 
+                  course.image == '' || course.image == null ? 
                   Image.asset('assets/no-image.png') : 
                   FadeInImage(
                     placeholder: const AssetImage('assets/jar-loading.gif'), 

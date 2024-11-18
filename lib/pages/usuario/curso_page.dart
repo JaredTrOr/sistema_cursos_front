@@ -38,7 +38,13 @@ class CursoPage extends StatelessWidget {
                 ),
               ),
             ),
-            Image.network(course.image!),
+            course.image == null || course.image == ''
+            ? const Image(image: AssetImage('assets/no-image.png'), fit: BoxFit.cover,)
+                                    : FadeInImage(
+                                        placeholder: const AssetImage('assets/jar-loading.gif'), 
+                                        image: NetworkImage(course.image!),
+                                        fit: BoxFit.cover,
+                                      ),
             const SizedBox(height: 20),
             Align(
               alignment: Alignment.center,

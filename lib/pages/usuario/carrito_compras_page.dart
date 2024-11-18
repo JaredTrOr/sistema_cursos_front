@@ -24,11 +24,13 @@ class CarritoComprasPage extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 10),
                         child: ListTile(
-                          leading: Image.network(
-                            item.image!,
-                            width: 100,
-                            fit: BoxFit.cover,
-                          ),
+                          leading: item.image == null || item.image == ''
+                                    ? const Image(image: AssetImage('assets/no-image.png'), fit: BoxFit.cover,)
+                                    : FadeInImage(
+                                        placeholder: const AssetImage('assets/jar-loading.gif'), 
+                                        image: NetworkImage(item.image!),
+                                        fit: BoxFit.cover,
+                                      ),
                           title: Text(item.name,
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
