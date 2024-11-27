@@ -25,7 +25,7 @@ class CardCurso extends StatelessWidget {
     
     // Check if the course is already bought by the user
     final isBought = userService.getUserCourses.any((id) => id == course.id);
-
+    print(course.image);
     return GestureDetector(
       onTap: onTap,
       child: Card(

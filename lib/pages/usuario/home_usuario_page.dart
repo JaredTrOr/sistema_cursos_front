@@ -22,52 +22,62 @@ class HomeUsuarioPage extends StatelessWidget {
       return const IsLoading();
     }    
 
+     print("courseService.isLoading: ${courseService.isLoading}");
+      print("courseService.courses.length: ${courseService.courses.length}");
+
+
+      for (var course in courseService.courses) {
+        print(course.name);
+        print(course.image);
+      }
+
+
     return Scaffold(
-      body: Expanded(
-        child: courseService.courses.isNotEmpty ? 
-        ListView.builder(
-          itemCount: courseService.courses.length,
-          itemBuilder: (context, index) {
-            final course = courseService.courses[index];
+      body: courseService.courses.isNotEmpty ? 
+      ListView.builder(
+        itemCount: courseService.courses.length,
+        itemBuilder: (context, index) {
+          final course = courseService.courses[index];
+      
+          bool isPurchased = userService.isBeingPurchased(course.id!);
 
-            bool isPurchased = userService.isBeingPurchased(course.id!);
-
-            return CardCurso(
-              course: course,
-              onAdd: () {
-                if (!cartProvider.isTheElementInCart(course)) {
-                  cartProvider.addCourseToCart(course);
-                  popUp(context: context, title: 'Agregado', body: 'Curso agregado al carrito', dialogType: 'success');
-                  return;
-                }
-
-                popUp(context: context, title: 'Atención', body: 'Este curso ya esta en el carrito', dialogType: 'info');
-              },
-              onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CursoPage(course: course, permission: isPurchased,),
-                          ),
-                        );
-              },
-              onFavorite: () { 
-                if (!userService.isFavoriteCourse(course.id!)) {
-                  userService.addFavoriteCourse(course.id!);
-
-                  courseService.increaseAmountOfFavorites(course);
-                  return;
-                }
-                
-                userService.removeFavoriteCourse(course.id!);
-                courseService.decreaseAmountOfFavorites(course);
-              },
-              isFavorite: userService.isFavoriteCourse(course.id!), 
-            );
-          },
-        )
-        : const NoCourses(description: 'No hay cursos disponibles',),
-      ),
+          print('IMAGE');
+          print(course.image!);
+          return CardCurso(
+            course: course,
+            onAdd: () {
+              if (!cartProvider.isTheElementInCart(course)) {
+                cartProvider.addCourseToCart(course);
+                popUp(context: context, title: 'Agregado', body: 'Curso agregado al carrito', dialogType: 'success');
+                return;
+              }
+      
+              popUp(context: context, title: 'Atención', body: 'Este curso ya esta en el carrito', dialogType: 'info');
+            },
+            onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CursoPage(course: course, permission: isPurchased,),
+                        ),
+                      );
+            },
+            onFavorite: () { 
+              if (!userService.isFavoriteCourse(course.id!)) {
+                userService.addFavoriteCourse(course.id!);
+      
+                courseService.increaseAmountOfFavorites(course);
+                return;
+              }
+              
+              userService.removeFavoriteCourse(course.id!);
+              courseService.decreaseAmountOfFavorites(course);
+            },
+            isFavorite: userService.isFavoriteCourse(course.id!), 
+          );
+        },
+      )
+      : const NoCourses(description: 'No hay cursos disponibles',),
     );
   }
 }
