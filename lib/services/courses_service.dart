@@ -130,12 +130,15 @@ class CoursesService extends ChangeNotifier {
       }
       
       await _db.collection('courses').doc(id).delete();
+      courses.removeWhere((course) => course.id == id);
 
       isLoading = false;
       notifyListeners();
       return {'success': true, 'message': 'Curso eliminado exitosamente'};
 
     } catch(e) {
+      print('Error deleteCourse');
+      print(e);
       isLoading = false;
       notifyListeners();
       return {'success': false, 'message': 'Error al eliminar curso', 'error': e};

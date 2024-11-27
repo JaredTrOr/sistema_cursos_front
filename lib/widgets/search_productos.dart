@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sistema_cursos_front/pages/usuario/curso_page.dart';
-import 'package:sistema_cursos_front/pages/usuario/cursos_adquiridos_page.dart';
+import 'package:sistema_cursos_front/services/courses_service.dart';
 import 'package:sistema_cursos_front/widgets/card_curso.dart';
 
 class SearchProductos extends SearchDelegate {
@@ -54,34 +55,34 @@ class SearchProductos extends SearchDelegate {
  @override
 Widget buildSuggestions(BuildContext context) {
   final sugerencias = cursos.where((curso) => curso['title']!.toLowerCase().contains(query.toLowerCase())).toList();
+  final courserService = Provider.of<CoursesService>(context);
 
   return ListView.builder(
     itemCount: sugerencias.length,
     itemBuilder: (context, index) {
+
+      final course = courserService.courses[index];
+
       return CardCurso(
-        title: sugerencias[index]['title']!,
-        subtitle: sugerencias[index]['subtitle']!,
-        image: sugerencias[index]['image']!,
-        price: sugerencias[index]['price']!,
+        course: course,
+        onAdd: () {},
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => CursoPage(
-                title: sugerencias[index]['title']!,
-                subtitle: sugerencias[index]['subtitle']!,
-                image: sugerencias[index]['image']!,
-                price: sugerencias[index]['price']!,
+                course: course,
+                permission: false,
               ),
             ),
           );
         },
         onFavorite: () {
           // Agregar el curso a la lista de cursos adquiridos
-          if (!cursosAdquiridos.any((c) => c['title'] == sugerencias[index]['title'])) {
-            cursosAdquiridos.add(sugerencias[index]);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${sugerencias[index]['title']} agregado a Mis FAvoritos')));
-          }
+          // if (!cursosAdquiridos.any((c) => c['title'] == sugerencias[index]['title'])) {
+          //   cursosAdquiridos.add(sugerencias[index]);
+          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${sugerencias[index]['title']} agregado a Mis FAvoritos')));
+          // }
         },
         isFavorite: false, 
       );

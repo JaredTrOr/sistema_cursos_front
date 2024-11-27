@@ -221,7 +221,7 @@ class CursoPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                lesson['description'],
+                lesson['url'],
                 style: const TextStyle(
                   color: Color(0xFF0B6477),
                   fontSize: 20,

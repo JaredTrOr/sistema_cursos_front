@@ -231,11 +231,12 @@ class CursoCreadoContenidoBody extends StatelessWidget {
                                   popUpConfirmation(context: context, title: 'Eliminación de curso', body: const Text('¿Estás seguro de querer eliminar el curso?'), onAccept: () {
                                     courseService.deleteCourse(course.id!)
                                     .then((response) {
-                                      if (response['success']) {
-                                        popUp(context: context, title: 'Curso eliminado', body: 'El curso ha sido eliminado exitosamente', dialogType: 'success');
-                                      } else {
-                                        popUp(context: context, title: 'error', body: response['message'], dialogType: 'error');
-                                      }
+
+                                      // if (response['success']) {
+                                      //   popUp(context: context, title: 'Curso eliminado', body: 'El curso ha sido eliminado exitosamente', dialogType: 'success');
+                                      // } else {
+                                      //   popUp(context: context, title: 'error', body: response['message'], dialogType: 'error');
+                                      // }
                                     }).catchError((error) {
                                       popUp(context: context, title: 'error', body: 'Hubo un error al borrar el curso', dialogType: 'error');
                                     });
